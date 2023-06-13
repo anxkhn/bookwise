@@ -11,10 +11,12 @@
   <li class="nav-item">
       <a href="/reports" class="nav-link active" aria-current="page">Reports</a>
   </li>
-</ul> {% endblock %} {% block main %} <div class="chart-container" style="padding: 100px; margin-bottom: 100px;">
+</ul> {% endblock %} {% block main %} <div class="chart-container" style="padding: 100px;">
+    <h2>Top Performing Books</h2>
   <canvas id="book-chart" class="chart"></canvas>
 </div>
-<div class="chart-container" style="padding: 100px; margin-bottom: 100px;">
+<div class="chart-container" style="padding: 100px;">
+    <h2>Top Paying Members</h2>
   <canvas id="member-chart" class="chart"></canvas>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
