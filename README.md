@@ -156,3 +156,22 @@ The librarian should be able to import books into the system using the [Frappe 
 - Top paying members
 
 ![](https://raw.githubusercontent.com/anxkhn/bookwise/main/Screenshots/Screenshot%202023-06-13%20194041.png)
+
+---
+## Instructions
+
+1. Create a virtual environment using :
+```
+python -m venv env
+```
+2. Install the dependencies :
+```
+pip install -r requirements.txt
+```
+3. Run the application on `http://localhost:5000` by using:
+```
+flask run
+```
+
+Check out the deployed version of this app on PythonAnywhere:
+[bookwise.pythonanywhere.com/login](https://bookwise.pythonanywhere.com/login)
