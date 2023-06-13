@@ -91,12 +91,12 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.24.0/axios.min.js"></script>
         <script>
-            // Function to handle form submission
+            // Form submission
             function handleFormSubmit(event) {
-                event.preventDefault(); // Prevent page refresh
+                event.preventDefault();
                 const criteria = document.querySelector('select[name="criteria"]').value;
                 const query = document.querySelector('input[name="query"]').value;
-                // Send AJAX request to search API endpoint
+                // Send AJAX request
                 axios.get('/api/search', {
                     params: {
                         [criteria]: query
@@ -115,7 +115,6 @@
                     searchResults.innerHTML = ' < p > No results found. < /p>';
                     return;
                 }
-                // Display each result as a card
                 results.forEach(function(result) {
                     const card = document.createElement('div');
                     card.classList.add('card');
@@ -154,7 +153,7 @@
                     cardButton.innerText = 'Import';
                     cardButton.addEventListener('click', function() {
                         const numBooksInput = document.getElementById('numBooksInput');
-                        numBooksInput.value = ''; // Clear the input field
+                        numBooksInput.value = ''; 
                         numBooksInput.setAttribute('data-result', JSON.stringify(result));
                     });
                     const importModal = document.createElement('div');
@@ -208,9 +207,9 @@
                     searchResults.appendChild(card);
                 });
             }
-            // Function to add book to cart
+            // add book to cart
             function addToCart(title, authors, isbn, numBooks, publicationDate, publisher, numPages) {
-                // Send AJAX request to add book to cart API endpoint
+                // Send AJAX request 
                 axios.post('/import_books', {
                     title: title,
                     authors: authors,
@@ -226,24 +225,20 @@
                 }).then(function(response) {
                     displayFeedback('success', 'Book added successfully!');
                     console.log(response.data);
-                    // Handle success message or UI updates here
                 }).catch(function(error) {
                     displayFeedback('error', 'Failed to add the book. Please try again.');
                     console.log(error);
-                    // Handle error message or UI updates here
                 });
             }
-            // Function to display feedback messages
             function displayFeedback(type, message) {
                 const feedbackContainer = document.getElementById('feedbackContainer');
-                feedbackContainer.innerHTML = ''; // Clear previous feedback
+                feedbackContainer.innerHTML = ''; 
                 const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
                 const alertElement = document.createElement('div');
                 alertElement.classList.add('alert', alertClass);
                 alertElement.innerText = message;
                 feedbackContainer.appendChild(alertElement);
             }
-            // Attach form submit event listener
             const form = document.querySelector('form');
             form.addEventListener('submit', handleFormSubmit);
         </script>

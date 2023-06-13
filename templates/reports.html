@@ -21,11 +21,9 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-  // Fetch book data from the Flask backend API
   fetch('/api/top-books').then(response => response.json()).then(data => {
       const bookLabels = data.map(book => `${book.book_id}: ${book.title}`);
       const bookAmounts = data.map(book => book.total_fees);
-      // Creating the book chart
       const bookCtx = document.getElementById('book-chart').getContext('2d');
       const bookChart = new Chart(bookCtx, {
           type: 'bar',
@@ -59,11 +57,9 @@
           }
       });
   });
-  // Fetch member data from the Flask backend API
   fetch('/api/top-members').then(response => response.json()).then(data => {
       const memberLabels = data.map(member => `${member.id}: ${member.name}`);
       const memberAmounts = data.map(member => member.total_fees);
-      // Creating the member chart
       const memberCtx = document.getElementById('member-chart').getContext('2d');
       const memberChart = new Chart(memberCtx, {
           type: 'bar',
