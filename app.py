@@ -39,11 +39,6 @@ def after_request(response):
 
 
 def login_required(f):
-    """
-    Decorate routes to require login.
-    http://flask.pocoo.org/docs/0.12/patterns/viewdecorators/
-    """
-
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if session.get("user_id") is None:
@@ -53,7 +48,9 @@ def login_required(f):
     return decorated_function
 
 
+# Function to calculate fees, abased on current date
 def calculate_due(transaction_id):
+
     transaction = db.execute("SELECT * FROM transactions WHERE id = ?", transaction_id)[
         0
     ]
@@ -68,6 +65,9 @@ def calculate_due(transaction_id):
     return (due_amount, due_days)
 
 
+## Home / Books
+
+# Book page
 @app.route("/", methods=["GET", "POST"])
 @login_required
 def home():
@@ -92,82 +92,6 @@ def home():
 
     return render_template(
         "home.html", title=title, books=books, search_term=search_term
-    )
-
-
-# Members
-@app.route("/members", methods=["GET", "POST"])
-@login_required
-def members():
-    if request.method == "POST":
-        search_term = request.form.get("query")
-        query = f"""
-            SELECT *
-            FROM members
-            WHERE id LIKE '%{search_term}%'
-                OR name LIKE '%{search_term}%'
-                OR phone LIKE '%{search_term}%'
-                OR email LIKE '%{search_term}%'
-
-        """
-        members = db.execute(query)
-        title = "Search Results"
-
-    else:
-        members = db.execute("SELECT * FROM members ORDER BY doj DESC LIMIT 10")
-        search_term = ""
-        title = "Recent Members"
-
-    mem_num = db.execute("SELECT * FROM members")[0]["id"]
-    mem_num = int(mem_num) + 1
-    return render_template(
-        "members.html",
-        search_term=search_term,
-        mem_num=mem_num,
-        members=members,
-        title=title,
-    )
-
-
-# Transaction
-@app.route("/transactions", methods=["GET", "POST"])
-@login_required
-def transactions():
-    if request.method == "POST":
-
-        search_term = request.form.get("query")
-        search_by = request.form.get("search_by")
-        query = f"""
-            SELECT *
-            FROM transactions
-            WHERE {search_by} LIKE '%{search_term}%'
-        """
-
-        transactions = db.execute(query)
-        title = "Search Results"
-
-    else:
-        transactions = db.execute(
-            "SELECT * FROM transactions WHERE status = 'Issued' ORDER BY issue_date DESC LIMIT 10"
-        )
-        title = "Recent Transactions"
-
-    return render_template("transactions.html", title=title, transactions=transactions)
-
-
-# Fee
-@app.route("/fee/<id>", methods=["GET"])
-@login_required
-def fee(id):
-    transaction = db.execute("SELECT * FROM transactions WHERE id = ?", id)[0]
-    amount = calculate_due(id)[0]
-    due_days = calculate_due(id)[1]
-    return render_template(
-        "fee.html",
-        transaction=transaction,
-        amount=amount,
-        due_days=due_days,
-        due_amount=amount - 20,
     )
 
 
@@ -202,58 +126,9 @@ def add_book():
     return redirect("/")
 
 
-@app.route("/add_member", methods=["POST"])
-def add_member():
-    name = request.form["name"]
-    email = request.form["email"]
-    phone = request.form["phone"]
-
-    date_of_joining = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-    # Insert the member into the database
-    db.execute(
-        "INSERT INTO members (name, email, phone, doj) VALUES (?, ?, ?, ?)",
-        name,
-        email,
-        phone,
-        date_of_joining,
-    )
-
-    # Redirect to the homepage or any other appropriate page
-    return redirect("/members")
-
-
-@app.route("/delete_member", methods=["POST"])
-def delete_member():
-    member_id = int(request.form.get("member_id"))
-    db.execute("DELETE FROM members WHERE id = ?", member_id)
-
-    flash("Member deleted successfully.", "green")
-    return redirect("/members")
-
-
-# Edit Memeber
-@app.route("/edit_member", methods=["POST"])
-def edit_member():
-
-    member_id = int(request.form["member_id"])
-    name = request.form["name"]
-    email = request.form["email"]
-    phone = request.form["phone"]
-
-    # Update the member in the database
-    db.execute(
-        "UPDATE members SET name = ?, email = ?, phone = ? WHERE id = ?",
-        name,
-        email,
-        phone,
-        member_id,
-    )
-
-    return redirect("/members")
-
-
 # Issue a book
+
+
 @app.route("/issue_book", methods=["POST"])
 def issue_book():
     book_id = request.form["book_id"]
@@ -264,7 +139,6 @@ def issue_book():
     if not member_exist:
         flash("User ID is not valid. ", "red")
     else:
-        # Get the current date and time
         current_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         transactions = db.execute(
@@ -277,11 +151,10 @@ def issue_book():
             due += calculate_due(i["id"])[0]
 
         if due > 500:
-            flash("Due is over 500 rupees.", "yellow")
+            flash("Due is over 500 rupees.", "red")
 
         else:
 
-            # Insert the transaction into the database
             db.execute(
                 "INSERT INTO transactions (book_id, member_id, issue_date) VALUES (?, ?, ?)",
                 book_id,
@@ -289,7 +162,6 @@ def issue_book():
                 current_date,
             )
 
-            # Update the stock of the book
             db.execute("UPDATE books SET stock = stock - 1 WHERE id = ?", book_id)
 
             name = db.execute("SELECT * from members where id = ?", member_id)[0][
@@ -298,31 +170,10 @@ def issue_book():
 
             flash(f"Book issued successfully to {name}.", "green")
 
-    # Redirect to the homepage or any other appropriate page
     return redirect("/")
 
 
-# Return a book
-@app.route("/return_book/<id>", methods=["GET"])
-def return_book(id):
-    # Update book stock
-    book_id = db.execute("SELECT book_id FROM transactions WHERE id = ?", id)[0][
-        "book_id"
-    ]
-    db.execute("UPDATE books SET stock = stock + 1 WHERE id = ?", book_id)
-    db.execute(
-        "UPDATE transactions SET status = 'Returned', fee_paid = ? WHERE id = ?",
-        calculate_due(id)[0],
-        id,
-    )
-
-    flash("Book returned", "green")
-    return redirect("/transactions")
-
-
-@app.route("/api/check_balance/<transaction_id>", methods=["GET"])
-def check_balance(transaction_id):
-    return jsonify(calculate_due(transaction_id)[0])
+# Import a book
 
 
 @app.route("/import_books", methods=["GET", "POST"])
@@ -336,11 +187,12 @@ def import_books():
         authors = data.get("authors")
         isbn = data.get("isbn")
         publication_date = data.get("publication_date")
+        date_object = datetime.strptime(publication_date, "%m/%d/%Y")
+        publication_date = date_object.strftime("%Y-%m-%d")
+
         publisher = data.get("publisher")
         num_pages = data.get("num_pages")
         date_of_adding = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-        # Perform book import
 
         existing_book = db.execute("SELECT * FROM books WHERE isbn = ?", isbn)
         try:
@@ -370,19 +222,7 @@ def import_books():
     return render_template("import_books.html")
 
 
-@app.route("/member_info/<id>", methods=["GET"])
-@login_required
-def member_info(id):
-    info = db.execute("SELECT * from members WHERE id = ?", id)[0]
-    transactions = db.execute(
-        "SELECT id from transactions WHERE member_id = ? AND status = 'Issued'", id
-    )
-
-    due = 0
-    for i in transactions:
-        due += calculate_due(i["id"])[0]
-
-    return render_template("member_info.html", due=due, info=info)
+# Search from Frappe API
 
 
 @app.route("/api/search", methods=["GET"])
@@ -398,50 +238,262 @@ def search():
     return jsonify(fixed_json), response.status_code
 
 
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    """Log user in"""
+## Members
 
-    # User reached route via POST (as by submitting a form via POST)
+# Members Page
+@app.route("/members", methods=["GET", "POST"])
+@login_required
+def members():
+    if request.method == "POST":
+        search_term = request.form.get("query")
+        query = f"""
+            SELECT *
+            FROM members
+            WHERE id LIKE '%{search_term}%'
+                OR name LIKE '%{search_term}%'
+                OR phone LIKE '%{search_term}%'
+                OR email LIKE '%{search_term}%'
+
+        """
+        members = db.execute(query)
+        title = "Search Results"
+
+    else:
+        members = db.execute("SELECT * FROM members ORDER BY doj DESC LIMIT 10")
+        search_term = ""
+        title = "Recent Members"
+    try:
+        mem_num = db.execute("SELECT * FROM members ORDER BY id DESC LIMIT 1")[0]["id"]
+        mem_num = int(mem_num) + 1
+    except:
+        mem_num = 1
+
+    return render_template(
+        "members.html",
+        search_term=search_term,
+        mem_num=mem_num,
+        members=members,
+        title=title,
+    )
+
+
+# Add A Member
+@app.route("/add_member", methods=["POST"])
+def add_member():
+    name = request.form["name"]
+    email = request.form["email"]
+    phone = request.form["phone"]
+
+    date_of_joining = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    db.execute(
+        "INSERT INTO members (name, email, phone, doj) VALUES (?, ?, ?, ?)",
+        name,
+        email,
+        phone,
+        date_of_joining,
+    )
+    return redirect("/members")
+
+
+# Delete a member
+@app.route("/delete_member", methods=["POST"])
+def delete_member():
+    member_id = int(request.form.get("member_id"))
+    try:
+        db.execute("DELETE FROM members WHERE id = ?", member_id)
+    except:
+        flash("Member has books to return.", "red")
+    else:
+        flash("Member deleted successfully.", "green")
+    return redirect("/members")
+
+
+# Edit Memeber
+@app.route("/edit_member", methods=["POST"])
+def edit_member():
+
+    member_id = int(request.form["member_id"])
+    name = request.form["name"]
+    email = request.form["email"]
+    phone = request.form["phone"]
+
+    db.execute(
+        "UPDATE members SET name = ?, email = ?, phone = ? WHERE id = ?",
+        name,
+        email,
+        phone,
+        member_id,
+    )
+
+    return redirect("/members")
+
+
+# Member Info
+@app.route("/member_info/<id>", methods=["GET"])
+@login_required
+def member_info(id):
+    info = db.execute("SELECT * from members WHERE id = ?", id)[0]
+    transactions = db.execute(
+        "SELECT id from transactions WHERE member_id = ? AND status = 'Issued'", id
+    )
+
+    due = 0
+    for i in transactions:
+        due += calculate_due(i["id"])[0]
+
+    return render_template("member_info.html", due=due, info=info)
+
+
+##  Transaction
+
+# Transaction Page
+@app.route("/transactions", methods=["GET", "POST"])
+@login_required
+def transactions():
     if request.method == "POST":
 
-        # Ensure username was submitted
+        search_term = request.form.get("query")
+        search_by = request.form.get("search_by")
+        query = f""" SELECT t.*, b.title AS book_title, m.name AS member_name
+                FROM transactions t
+                JOIN books b ON t.book_id = b.id
+                JOIN members m ON t.member_id = m.id
+                WHERE t.{search_by} LIKE '%{search_term}%'
+                """
+
+        transactions = db.execute(query)
+        title = "Search Results"
+
+    else:
+        transactions = db.execute(
+            """SELECT t.*, b.title AS book_title, m.name AS member_name
+FROM transactions t
+JOIN books b ON t.book_id = b.id
+JOIN members m ON t.member_id = m.id
+WHERE t.status = 'Issued'
+ORDER BY t.issue_date DESC
+LIMIT 10;
+
+"""
+        )
+        title = "Recent Transactions"
+
+    return render_template("transactions.html", title=title, transactions=transactions)
+
+
+# Return a book
+@app.route("/return_book/<id>", methods=["GET"])
+def return_book(id):
+    book_id = db.execute("SELECT book_id FROM transactions WHERE id = ?", id)[0][
+        "book_id"
+    ]
+    db.execute("UPDATE books SET stock = stock + 1 WHERE id = ?", book_id)
+    db.execute(
+        "UPDATE transactions SET status = 'Returned', fee_paid = ? WHERE id = ?",
+        calculate_due(id)[0],
+        id,
+    )
+
+    flash("Book returned", "green")
+    return redirect("/transactions")
+
+
+# Fee
+@app.route("/fee/<id>", methods=["GET"])
+@login_required
+def fee(id):
+    transaction = db.execute("SELECT * FROM transactions WHERE id = ?", id)[0]
+    amount = calculate_due(id)[0]
+    due_days = calculate_due(id)[1]
+    return render_template(
+        "fee.html",
+        transaction=transaction,
+        amount=amount,
+        due_days=due_days,
+        due_amount=amount - 20,
+    )
+
+
+## Reports
+
+# Reports Page
+@app.route("/reports", methods=["GET"])
+@login_required
+def reports():
+    return render_template("reports.html")
+
+
+# Top Books API
+
+
+@app.route("/api/top-books")
+def top_books_api():
+    book_data = db.execute(
+        """SELECT f.book_id, b.title, SUM(f.fee_paid) AS total_fees
+FROM transactions f
+JOIN books b ON f.book_id = b.id
+GROUP BY f.book_id, b.title
+ORDER BY total_fees DESC
+LIMIT 10;
+"""
+    )
+    return jsonify(book_data)
+
+
+# Top Paying Member API
+
+
+@app.route("/api/top-members")
+def top_members_api():
+    top_paying = db.execute(
+        """SELECT m.id,
+       m.name,
+       SUM(f.fee_paid) AS total_fees
+  FROM transactions f
+       JOIN
+       members m ON f.member_id = m.id
+ GROUP BY m.id,
+          m.name
+ ORDER BY total_fees DESC
+ LIMIT 10;
+"""
+    )
+    return jsonify(top_paying)
+
+
+## MISC
+
+# Login
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
         if not request.form.get("username"):
             flash("Please Enter Username", "yellow")
             return redirect("/login")
 
-        # Ensure password was submitted
         elif not request.form.get("password"):
             flash("Please Enter Password", "red")
             return redirect("/login")
         username = request.form.get("username").lower().strip()
-        # Query database for username
         rows = db.execute("SELECT * FROM users WHERE username = ?", username)
         password = request.form.get("password")
-        # Ensure username exists and password is correct
         if len(rows) != 1 or not check_password_hash(rows[0]["hash"], password):
             flash("Invalid username and/or password", "red")
             return redirect("/login")
-
-        # Remember which user has logged in
-
         session["user_id"] = rows[0]["id"]
-
-        # Redirect user to home page
         flash("Login Successful, Welcome to BookWise", "green")
         return redirect("/")
-
-    # User reached route via GET (as by clicking a link or via redirect)
     else:
         return render_template("login.html")
 
 
+# Logout
 @app.route("/logout")
 def logout():
-    """Log user out"""
     # Forget any user_id
     session.clear()
-    # Redirect user to login form
     return redirect("/")
 
 
