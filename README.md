@@ -46,7 +46,7 @@ The librarian should be able to import books into the system using the [Frappe 
 ---
 # My Submission: BookWise
 ## Library Management Web Application
-
+##### Please make sure to use a VPN if your ISP is blocking raw.githubusercontent.com, the images are embedded and should load.
 # Interface :
 
 ## Login
