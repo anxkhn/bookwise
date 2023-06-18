@@ -46,7 +46,6 @@ The librarian should be able to import books into the system using the [Frappe 
 ---
 # My Submission: BookWise
 ## Library Management Web Application
-##### Please make sure to use a VPN if your ISP is blocking raw.githubusercontent.com, the images are embedded and should load.
 # Interface :
 
 ## Login
@@ -57,7 +56,8 @@ The librarian should be able to import books into the system using the [Frappe 
 
 - all critiacal functions requires login session
 
-![](https://raw.githubusercontent.com/anxkhn/bookwise/main/Screenshots/Screenshot%202023-06-13%20193319.png)
+![Screenshot 2023-06-13 193319](https://github.com/anxkhn/bookwise/assets/83116240/5ceca8b1-1142-400c-964f-f89213e9a836)
+
 
 # 
 
@@ -69,17 +69,20 @@ The librarian should be able to import books into the system using the [Frappe 
 
 - Can issue books from the listing (if due is under 500)
 
-![](https://raw.githubusercontent.com/anxkhn/bookwise/main/Screenshots/Screenshot%202023-06-13%20193348.png)
+  
+![Screenshot 2023-06-13 193348](https://github.com/anxkhn/bookwise/assets/83116240/3ff0ab60-ce10-4469-b3bb-a07af5916151)
 
 
 
 - Add books and Import books option 
 
-![](https://raw.githubusercontent.com/anxkhn/bookwise/main/Screenshots/Screenshot%202023-06-13%20193401.png)
+
+![Screenshot 2023-06-13 193401](https://github.com/anxkhn/bookwise/assets/83116240/562dafe5-1356-4f2b-a6a1-1bb5b049d915)
 
 - Manually add the books
 
-![](https://raw.githubusercontent.com/anxkhn/bookwise/main/Screenshots/Screenshot%202023-06-13%20193457.png)
+![Screenshot 2023-06-13 193457](https://github.com/anxkhn/bookwise/assets/83116240/e7c91eec-ffd6-44e8-85aa-506810c7556e)
+
 
 - Importing books from Frappe API
 
@@ -87,15 +90,17 @@ The librarian should be able to import books into the system using the [Frappe 
 
 - Easy to librarian to verify and add books
 
-![](https://raw.githubusercontent.com/anxkhn/bookwise/main/Screenshots/Screenshot%202023-06-13%20193539.png)
+![Screenshot 2023-06-13 193539](https://github.com/anxkhn/bookwise/assets/83116240/d73f579b-2fad-47b2-915e-a959adbd4f38)
+
 
 - All the books information will be imported, only stock information is required
 
-![](https://raw.githubusercontent.com/anxkhn/bookwise/main/Screenshots/Screenshot%202023-06-13%20193553.png)
+![Screenshot 2023-06-13 193553](https://github.com/anxkhn/bookwise/assets/83116240/cccad77a-057d-4967-a0d5-22ad6027290f)
+
 
 - User feedback upon sucessefully importing
 
-![](https://raw.githubusercontent.com/anxkhn/bookwise/main/Screenshots/Screenshot%202023-06-13%20193617.png)
+![Screenshot 2023-06-13 193617](https://github.com/anxkhn/bookwise/assets/83116240/7508842a-4d8e-437b-8270-3e9d79e0d66d)
 
 ## 
 
@@ -105,23 +110,28 @@ The librarian should be able to import books into the system using the [Frappe 
 
 - Search for members based on thier ID, name or contact information
 
-![](https://raw.githubusercontent.com/anxkhn/bookwise/main/Screenshots/Screenshot%202023-06-13%20193632.png)
+![Screenshot 2023-06-13 193632](https://github.com/anxkhn/bookwise/assets/83116240/6bd1d206-fff9-46d4-8ef9-3870f508c520)
+
 
 - Add members
 
-![](https://raw.githubusercontent.com/anxkhn/bookwise/main/Screenshots/Screenshot%202023-06-13%20193700.png)
+![Screenshot 2023-06-13 193700](https://github.com/anxkhn/bookwise/assets/83116240/1b745250-5c25-45f5-806e-f99b1329b189)
+
 
 - Delete Members (constrains added if book pending is due)
 
-![](https://raw.githubusercontent.com/anxkhn/bookwise/main/Screenshots/Screenshot%202023-06-13%20193700.png)
+![Screenshot 2023-06-13 193712](https://github.com/anxkhn/bookwise/assets/83116240/d5c32f6c-6257-4e78-ac1b-03f3fc173eed)
+
 
 - Edit Member Info 
 
-![](https://raw.githubusercontent.com/anxkhn/bookwise/main/Screenshots/Screenshot%202023-06-13%20193726.png)
+![Screenshot 2023-06-13 193726](https://github.com/anxkhn/bookwise/assets/83116240/fcf67c47-795b-40a2-bb73-8a7dc9e5d9c3)
+
 
 - View Detailed Member Info
 
-![](https://raw.githubusercontent.com/anxkhn/bookwise/main/Screenshots/Screenshot%202023-06-13%20193739.png)
+![Screenshot 2023-06-13 193739](https://github.com/anxkhn/bookwise/assets/83116240/6393ba38-25d0-4e68-84ed-97f32f68ea9f)
+
 
 
 
@@ -131,31 +141,34 @@ The librarian should be able to import books into the system using the [Frappe 
 
 - Check fees due
 
-![](https://raw.githubusercontent.com/anxkhn/bookwise/main/Screenshots/Screenshot%202023-06-13%20193831.png)
+![Screenshot 2023-06-13 193831](https://github.com/anxkhn/bookwise/assets/83116240/573f6256-1b70-4dfe-b653-317919507b3d)
+
 
 - Detailed Calculation
 
-![](https://raw.githubusercontent.com/anxkhn/bookwise/main/Screenshots/Screenshot%202023-06-13%20193953.png)
+![Screenshot 2023-06-13 193953](https://github.com/anxkhn/bookwise/assets/83116240/92052e85-40c8-4b9c-8a4a-b35026fbf212)
+
 
 - Manual Searching of past transactions
 
-![](https://raw.githubusercontent.com/anxkhn/bookwise/main/Screenshots/Screenshot%202023-06-13%20193854.png)
+![Screenshot 2023-06-13 193854](https://github.com/anxkhn/bookwise/assets/83116240/0224e92d-12ef-4427-9d2b-d1b7d584cd6e)
+
 
 - Records of past transactions
 
-![](https://raw.githubusercontent.com/anxkhn/bookwise/main/Screenshots/Screenshot%202023-06-13%20194016.png)
-
+![Screenshot 2023-06-13 194016](https://github.com/anxkhn/bookwise/assets/83116240/b7ac057a-434e-44bc-8468-4d2625f15d86)
 
 
 ## Report
 
 - Top performing books 
 
-![](https://raw.githubusercontent.com/anxkhn/bookwise/main/Screenshots/Screenshot%202023-06-13%20194033.png)
+![Screenshot 2023-06-13 194033](https://github.com/anxkhn/bookwise/assets/83116240/02a0e93d-dcdb-4c5d-b203-9b8f417284ca)
+
 
 - Top paying members
 
-![](https://raw.githubusercontent.com/anxkhn/bookwise/main/Screenshots/Screenshot%202023-06-13%20194041.png)
+![Screenshot 2023-06-13 194041](https://github.com/anxkhn/bookwise/assets/83116240/5e3d6035-ae6d-484e-8b82-83d91139a19c)
 
 ---
 ## Instructions
