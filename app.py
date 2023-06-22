@@ -54,7 +54,8 @@ def calculate_due(transaction_id):
     transaction = db.execute("SELECT * FROM transactions WHERE id = ?", transaction_id)[
         0
     ]
-    issue_date = datetime.strptime(transaction["issue_date"], "%Y-%m-%d %H:%M:%S")
+    issue_date = datetime.strptime(
+        transaction["issue_date"], "%Y-%m-%d %H:%M:%S")
     return_date = datetime.now()
     days_since_return = (return_date - issue_date).days
     due_amount = 20
@@ -65,7 +66,7 @@ def calculate_due(transaction_id):
     return (due_amount, due_days)
 
 
-## Home / Books
+# Home / Books
 
 # Book page
 @app.route("/", methods=["GET", "POST"])
@@ -86,7 +87,8 @@ def home():
         books = db.execute(query)
         title = "Search Result"
     else:
-        books = db.execute("SELECT * FROM books ORDER BY date_added DESC LIMIT 10")
+        books = db.execute(
+            "SELECT * FROM books ORDER BY date_added DESC LIMIT 10")
         title = "Recently Added Books"
         search_term = ""
 
@@ -121,7 +123,8 @@ def add_book():
             date_of_adding,
         )
     else:
-        db.execute("UPDATE books SET stock = stock + ? WHERE isbn = ?", num_books, isbn)
+        db.execute(
+            "UPDATE books SET stock = stock + ? WHERE isbn = ?", num_books, isbn)
 
     return redirect("/")
 
@@ -162,7 +165,8 @@ def issue_book():
                 current_date,
             )
 
-            db.execute("UPDATE books SET stock = stock - 1 WHERE id = ?", book_id)
+            db.execute(
+                "UPDATE books SET stock = stock - 1 WHERE id = ?", book_id)
 
             name = db.execute("SELECT * from members where id = ?", member_id)[0][
                 "name"
@@ -238,7 +242,7 @@ def search():
     return jsonify(fixed_json), response.status_code
 
 
-## Members
+# Members
 
 # Members Page
 @app.route("/members", methods=["GET", "POST"])
@@ -259,11 +263,13 @@ def members():
         title = "Search Results"
 
     else:
-        members = db.execute("SELECT * FROM members ORDER BY doj DESC LIMIT 10")
+        members = db.execute(
+            "SELECT * FROM members ORDER BY doj DESC LIMIT 10")
         search_term = ""
         title = "Recent Members"
     try:
-        mem_num = db.execute("SELECT * FROM members ORDER BY id DESC LIMIT 1")[0]["id"]
+        mem_num = db.execute(
+            "SELECT * FROM members ORDER BY id DESC LIMIT 1")[0]["id"]
         mem_num = int(mem_num) + 1
     except:
         mem_num = 1
@@ -344,7 +350,7 @@ def member_info(id):
     return render_template("member_info.html", due=due, info=info)
 
 
-##  Transaction
+# Transaction
 
 # Transaction Page
 @app.route("/transactions", methods=["GET", "POST"])
@@ -414,7 +420,7 @@ def fee(id):
     )
 
 
-## Reports
+# Reports
 
 # Reports Page
 @app.route("/reports", methods=["GET"])
@@ -461,7 +467,7 @@ def top_members_api():
     return jsonify(top_paying)
 
 
-## MISC
+# MISC
 
 # Login
 
