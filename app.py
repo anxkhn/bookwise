@@ -65,6 +65,14 @@ def calculate_due(transaction_id):
     due_amount += due_days * 5
     return (due_amount, due_days)
 
+# For pytest
+def days_due_amount(days_since_return):
+    due_amount = 20
+    due_days = 0
+    if days_since_return > 7:
+        due_days = days_since_return - 7
+    due_amount += due_days * 5
+    return (due_amount)
 
 # Home / Books
 
